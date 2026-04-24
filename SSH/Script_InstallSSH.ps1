@@ -30,7 +30,7 @@ function Write-Log {
 }
 
 Write-Log "="
-Write-Log " INÍCIO DO SCRIPT DE INSTALAÇÃO SSH "
+Write-Log " INÍCIO DO SCRIPT DE INSTALAÇAO SSH "
 Write-Log "="
 
 # ==========================
@@ -45,7 +45,7 @@ if (-not $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administra
 }
 
 # ==========================
-# DEFINIR POLÍTICA DE EXECUÇÃO
+# DEFINIR POLÍTICA DE EXECUÇAO
 # ==========================
 
 try {
@@ -53,11 +53,11 @@ try {
     Write-Log "Política de execução definida como: Unrestricted"
 }
 catch {
-    Write-Log ("Falha ao definir política de execução: {0}" -f $_.Exception.Message) "WARN"
+    Write-Log ("Falha ao definir política de execuçao: {0}" -f $_.Exception.Message) "WARN"
 }
 
 # ==========================
-# FUNÇÃO: VERIFICAR SE OPENSSH SERVER ESTÁ INSTALADO
+# FUNÇÃO: VERIFICAR SE OPENSSH SERVER ESTA INSTALADO
 # ==========================
 
 function Test-OpenSSHInstalled {
@@ -79,7 +79,7 @@ function Install-OpenSSHOnline {
     Write-Log "Tentando instalar OpenSSH Server (modo ONLINE)..."
     try {
         Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
-        Write-Log "Instalação ONLINE do OpenSSH concluída com sucesso."
+        Write-Log "Instalaçao ONLINE do OpenSSH concluida com sucesso."
         return $true
     }
     catch {
@@ -113,7 +113,7 @@ function Install-OpenSSHManual {
             }
 
             Expand-Archive -Path $zipLocal -DestinationPath $installDir -Force
-            Write-Log "Extração concluída a partir do ZIP local."
+            Write-Log "Extraçao concluida a partir do ZIP local."
 
             # Detecta subpasta interna e move conteúdo para a raiz
             $innerFolder = Get-ChildItem -Path $installDir -Directory | Select-Object -First 1
@@ -125,18 +125,18 @@ function Install-OpenSSHManual {
 
             $installScript = Join-Path $installDir "install-sshd.ps1"
             if (Test-Path $installScript) {
-                Write-Log "Executando script de instalação local..."
+                Write-Log "Executando script de instalaçao local..."
                 & $installScript
             }
             else {
-                Write-Log "install-sshd.ps1 não encontrado após extração local." "ERROR"
+                Write-Log "install-sshd.ps1 nao encontrado apos extraçao local." "ERROR"
                 return $false
             }
 
             Set-Service sshd -StartupType Automatic
             Start-Service sshd
 
-            Write-Log "Instalação concluída com sucesso usando o ZIP local."
+            Write-Log "Instalaçao concluida com sucesso usando o ZIP local."
             return $true
         }
         catch {
@@ -158,7 +158,7 @@ function Install-OpenSSHManual {
         return $true
     }
     catch {
-        Write-Log ("Falha na instalação ONLINE: {0}" -f $_.Exception.Message) "WARN"
+        Write-Log ("Falha na instalaçao ONLINE: {0}" -f $_.Exception.Message) "WARN"
     }
 
     # ------------------------------------------------------------
@@ -175,7 +175,7 @@ function Install-OpenSSHManual {
         }
 
         Expand-Archive -Path $zipTemp -DestinationPath $installDir -Force
-        Write-Log "Extração concluída via GitHub."
+        Write-Log "Extraçao concluida via GitHub."
 
         # Detecta subpasta interna e move conteúdo para a raiz
         $innerFolder = Get-ChildItem -Path $installDir -Directory | Select-Object -First 1
@@ -198,14 +198,14 @@ function Install-OpenSSHManual {
         Set-Service sshd -StartupType Automatic
         Start-Service sshd
 
-        Write-Log "Instalação concluída via GitHub."
+        Write-Log "Instalaçao concluida via GitHub."
         return $true
     }
     catch {
         Write-Log ("Falha no fallback via GitHub: {0}" -f $_.Exception.Message) "ERROR"
     }
 
-    Write-Log "Falha total na instalação do OpenSSH (ZIP local, ONLINE e GitHub)." "ERROR"
+    Write-Log "Falha total na instalaçao do OpenSSH (ZIP local, ONLINE e GitHub)." "ERROR"
     return $false
 }
 
@@ -221,7 +221,7 @@ function Ensure-SshdRunning {
         if ($svc.Status -ne 'Running') {
             Start-Service sshd
         }
-        Write-Log "Serviço sshd configurado como Automático e em execução."
+        Write-Log "Serviço sshd configurado como Automático e em execuçao."
         return $true
     }
     catch {
@@ -253,18 +253,18 @@ function Test-SshPort {
 # ==========================
 
 Write-Host ""
-Write-Host "=== Verificando instalação do OpenSSH Server ==="
-Write-Log "Verificando se OpenSSH Server já está instalado..."
+Write-Host "=== Verificando instalaçao do OpenSSH Server ==="
+Write-Log "Verificando se OpenSSH Server já esta instalado..."
 
 $sshInstalled = Test-OpenSSHInstalled
 if (-not $sshInstalled) {
     Write-Host "OpenSSH Server não encontrado. Instalando..."
-    Write-Log "OpenSSH Server não encontrado. Iniciando processo de instalação..."
+    Write-Log "OpenSSH Server não encontrado. Iniciando processo de instalaçao..."
 
     # Tenta ONLINE primeiro? -> aqui seguimos sua regra: prioridade ZIP local
     $installed = Install-OpenSSHManual
     if (-not $installed) {
-        Write-Log "Instalação manual/online falhou. Tentando modo ONLINE direto..." "WARN"
+        Write-Log "Instalaçao manual/online falhou. Tentando modo ONLINE direto..." "WARN"
         $installed = Install-OpenSSHOnline
     }
 
@@ -276,7 +276,7 @@ if (-not $sshInstalled) {
     }
 }
 else {
-    Write-Host "OpenSSH Server já está instalado."
+    Write-Host "OpenSSH Server já esta instalado."
     Write-Log "OpenSSH Server já estava instalado."
 }
 
@@ -289,7 +289,7 @@ Write-Host "=== Iniciando e configurando o serviço SSHD ==="
 Write-Log "Configurando serviço sshd..."
 
 if (-not (Ensure-SshdRunning)) {
-    Write-Host "Serviço sshd não foi encontrado ou não iniciou. Verifique a instalação do OpenSSH."
+    Write-Host "Serviço sshd não foi encontrado ou nao iniciou. Verifique a instalaçao do OpenSSH."
     Write-Host "Log: $logFile"
     Read-Host "Pressione ENTER para sair"
     exit 1
@@ -313,7 +313,7 @@ try {
     }
     else {
         Write-Host "Regra de firewall já existe."
-        Write-Log "Regra de firewall 'OpenSSH SSH Server' já existia."
+        Write-Log "Regra de firewall 'OpenSSH SSH Server' ja existia."
     }
 }
 catch {
@@ -330,7 +330,7 @@ Start-Sleep -Seconds 5
 # ==========================
 
 Write-Host ""
-Write-Host "=== Obtendo IPs válidos da máquina ==="
+Write-Host "=== Obtendo IPs validos da maquina ==="
 Write-Log "Obtendo IPs IPv4 (interfaces ativas)..."
 
 try {
@@ -345,14 +345,14 @@ try {
 }
 catch {
     Write-Log ("Erro ao obter IPs: {0}" -f $_.Exception.Message) "ERROR"
-    Write-Host "Erro ao obter IPs da máquina."
+    Write-Host "Erro ao obter IPs da maquina."
     Read-Host "Pressione ENTER para sair"
     exit 1
 }
 
 if (-not $ips -or $ips.Count -eq 0) {
-    Write-Log "Nenhum IPv4 válido encontrado." "ERROR"
-    Write-Host "Nenhum IP válido encontrado."
+    Write-Log "Nenhum IPv4 valido encontrado." "ERROR"
+    Write-Host "Nenhum IP valido encontrado."
     Write-Host "Log: $logFile"
     Read-Host "Pressione ENTER para sair"
     exit 1
@@ -379,7 +379,7 @@ foreach ($ip in $ips) {
         break
     }
     else {
-        Write-Log "Porta 22 NÃO respondeu no IP $ip" "WARN"
+        Write-Log "Porta 22 NAO respondeu no IP $ip" "WARN"
     }
 }
 
@@ -391,16 +391,16 @@ if (-not $validIP) {
 else {
     Write-Host ""
     Write-Host "="
-    Write-Host " INSTALAÇÃO E CONFIGURAÇÃO CONCLUÍDAS"
+    Write-Host " INSTALAÇÃO E CONFIGURAÇAO CONCLUIDAS"
     Write-Host "="
     Write-Host ""
     Write-Host "Para conectar via SSH:"
-    Write-Host " • Domínio: ssh DOMINIO\\usuario@$validIP"
+    Write-Host " • Dominio: ssh DOMINIO\\usuario@$validIP"
     Write-Host " • Workgroup: ssh usuario@$validIP"
     Write-Host ""
     Write-Host "Exemplo:"
     Write-Host " ssh SAUDE\\joilson_admin@$validIP"
-    Write-Log "Script concluído com sucesso. IP válido para SSH: $validIP"
+    Write-Log "Script concluido com sucesso. IP válido para SSH: $validIP"
 }
 
 Write-Host ""
