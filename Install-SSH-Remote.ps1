@@ -7,8 +7,8 @@ $zipUrl = "https://github.com/jhoylsonn/Install_SSH/archive/refs/heads/main.zip"
 $tempZip = "$env:TEMP\Install_SSH.zip"
 $tempDir = "$env:TEMP\Install_SSH"
 
-# Baixar ZIP
-Invoke-WebRequest -UseBasicParsing -Uri $zipUrl -OutFile $tempZip
+# Baixar ZIP usando BITS (muito mais rápido e estável)
+Start-BitsTransfer -Source $zipUrl -Destination $tempZip
 
 # Extrair ZIP
 Expand-Archive -Path $tempZip -DestinationPath $tempDir -Force
