@@ -7,25 +7,11 @@ $zipUrl = "https://github.com/jhoylsonn/Install_SSH/archive/refs/heads/main.zip"
 $tempZip = "$env:TEMP\Install_SSH.zip"
 $tempDir = "$env:TEMP\Install_SSH"
 
-# Remover restos anteriores
-if (Test-Path $tempZip) { Remove-Item $tempZip -Force }
-if (Test-Path $tempDir) { Remove-Item $tempDir -Recurse -Force }
-
-# Baixar ZIP usando BITS
+# Baixar ZIP usando BITS (muito mais rápido e estável)
 Start-BitsTransfer -Source $zipUrl -Destination $tempZip
 
-# Garantir que o arquivo realmente existe
-if (-not (Test-Path $tempZip)) {
-    Write-Host "Erro: download falhou!" -ForegroundColor Red
-    exit
-}
-
-# Criar pasta temporária
-New-Item -ItemType Directory -Path $tempDir | Out-Null
-
-# Extrair ZIP usando .NET (método mais confiável)
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-[System.IO.Compression.ZipFile]::ExtractToDirectory($tempZip, $tempDir)
+# Extrair ZIP
+Expand-Archive -Path $tempZip -DestinationPath $tempDir -Force
 
 # Caminho da pasta SSH dentro do ZIP
 $sshPath = Join-Path $tempDir "Install_SSH-main\SSH"
