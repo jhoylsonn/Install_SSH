@@ -46,7 +46,7 @@ Write-Host "1 - Instalar OpenSSH"
 Write-Host "2 - Desinstalar OpenSSH"
 Write-Host "0 - Sair"
 Write-Host ""
-$op = Read-Host "Escolha uma opção"
+$op = Read-Host "Escolha uma opcao"
 
 switch ($op) {
     "1" {
@@ -62,7 +62,7 @@ switch ($op) {
         exit
     }
     default {
-        Write-Host "Opção inválida!" -ForegroundColor Red
+        Write-Host "Opção invalida!" -ForegroundColor Red
     }
 }
 
